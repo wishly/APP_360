@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>后台登录页面</title>
+    <!--<link rel="stylesheet" href="__STATIC__/layui/css/layui.css" />-->
+    <link rel="stylesheet" href="__CSS__/bootstrap.min.css" />
+    <link rel="stylesheet" href="__CSS__/login.css" />
+    <script src="__JS__/jquery-3.2.0.min.js"></script>
+    <!--<script src="__STATIC__/layui/layui.js"></script>-->
+    <script src="__JS__/bootstrap.min.js"></script>
+    <script src="__STATIC__/layer/layer.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row row-centered">
+        <div class="well col-md-4 col-xs-8 col-centered" id="login-content">
+            <h2>360后台登录</h2>
+            <form action="{:url('login/checkLogin')}" method="post" role="form" id="login-form">
+                <div class="input-group input-group-md">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user" aria-hidden="true"></i></span>
+                    <input type="text" class="form-control" id="userid" name="userid" placeholder="请输入用户ID" />
+                </div>
+                <div class="clearfix" style="margin-bottom: 15px;"></div> <!--清除浮动-->
+                <div class="input-group input-group-md">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="请输入密码" />
+                </div>
+                <div class="clearfix" style="margin-bottom: 15px;"></div> <!--清除浮动-->
+                <div class="input-group input-group-md">
+                    <input type="text" class="form-control" id="verify" name="verify" placeholder="请输入验证码" />
+                    <span class="input-group-addon" id="basic-addon2"><a href="javascript:refreshVerify()"><img id="verify_img" src="{:captcha_src()}" alt="验证码" onclick="refreshVerify()" ></a></span>
+                </div>
+                <br/>
+                <button type="submit" class="btn btn-success btn-block" id="userLogin">登录</button>
+            </form>
+        </div>
+    </div>
+<!--<div class="container-fluid">-->
+    <!--<div class="row">-->
+        <!--<form class="form-signin" id="loginForm">-->
+            <!--<h2 class="form-signin-heading">Please sign in</h2>-->
+            <!--<label for="inputEmail" class="sr-only">Email address</label>-->
+            <!--<input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="">-->
+            <!--<label for="inputPassword" class="sr-only">Password</label>-->
+            <!--<input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">-->
+            <!--<div class="checkbox">-->
+                <!--<label>-->
+                    <!--<input type="checkbox" value="remember-me"> Remember me-->
+                <!--</label>-->
+            <!--</div>-->
+            <!--<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>-->
+        <!--</form>-->
+    <!--</div>-->
+</div>
+    <script>
+        $(document).ready(function(){
+           var $username = $("#userid"),
+               $userPwd  = $("#password"),
+               $verify   = $("#verify");
+
+           $("#login-form").submit(function(){
+               $.ajax({
+                   type: "POST",
+                   url: "{:url('Login/checkLogin')}",
+                   data: $("#login-form").serialize(),
+                   success: function (res) {
+                        res = JSON.parse(res);
+                        if(res.state) {
+                            window.location = "{:url('Index/index')}";
+                        } else {
+                            layer.closeAll('loading');
+                            refreshVerify();
+                            layer.msg(res.message, {time: 2000});
+                        }
+                   },
+                   beforeSend: function() {
+                       layer.load(); //加载
+                   },
+                   complete: function() {
+                       layer.closeAll('loading');
+                   }
+               });
+        return false;
+        });
+        });
+
+        function refreshVerify() {
+//            var ts = Date.parse(new Date())/1000;
+//            $('#verify_img').attr("src", "/captcha?id="+ts);
+            $('#verify_img')[0].src=$('#verify_img')[0].src+'?'+Math.random();
+        }
+    </script>
+</body>
+</html>
