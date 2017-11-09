@@ -18,5 +18,10 @@ class Base extends Controller {
         if(!Session::get("user_id") || !Session::get("user_name")){
             $this->redirect("admin/Login/login");
         }
+
+        if(time() - session('session_start_time') > config('session')['expire']) {
+            Session::clear('admin360');
+            $this->redirect('admin/Login/login');
+        }
     }
 }

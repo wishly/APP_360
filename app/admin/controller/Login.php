@@ -24,9 +24,9 @@ class Login extends Controller
     public function checkLogin()
     {
         if (Request::instance()->isPost()) {
-            $username = input('userid', '', 'trim');
-            $userPwd = input('password', '', 'md5');
-            $verify = input('verify');
+            $username = input('userid', '', 'trim');    //获取用户名
+            $userPwd  = input('password', '', 'md5');    //获取密码
+            $verify   = input('verify');      //获取输入验证码
 
             //检测用户名密码是否正确
             $userData = model("Admin")->where(["username" => $username])->find();
@@ -39,17 +39,17 @@ class Login extends Controller
                 if (!captcha_check($verify)) {
                     $res["state"] = false;
                     $res["message"] = "验证码输入错误";
-                    echo $verify;
+//                    echo $verify;
                     return json_encode($res);
                 }
                 $data = [
                     "loginip" => Request::instance()->ip(),
                     "logintime" => date("Y-m-d H:i:s")
                 ];
-                $userData->save($data);
-                Session::set("user_id", $userData["id"], "admin360");
-                Session::set("user_name", $userData["username"], "admin360");
-
+                $userData->save($data); //存储登录IP和登录
+                session('session_start_time', time());
+                Session::set("user_id", $userData["id"]);
+                Session::set("user_name", $userData["username"]);
                 $res["state"] = true;
                 $res["message"] = "登录成功";
                 return json_encode($res);
@@ -62,6 +62,10 @@ class Login extends Controller
 //        Session::delete("user_name");
         Session::clear('admin360');
         return $this->fetch("login");
+    }
+
+    public function test() {
+        dump();
     }
 }
 
