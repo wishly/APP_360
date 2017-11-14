@@ -6,7 +6,15 @@
 </head>
 <body>
     <div class="container-fluid">
-        {block name="main"}主内容{/block}
+        <div class="row">
+            <div class="col-md-3">
+                {include file='common/nav-left'}
+            </div>
+            <div class="col-md-9">
+                {block name="main"}主内容{/block}
+            </div>
+        </div>
     </div>
+    {include file='common/footer'}
 </body>
 </html>

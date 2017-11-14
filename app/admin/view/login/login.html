@@ -64,11 +64,13 @@
            $("#login-form").submit(function(){
                $.ajax({
                    type: "POST",
-                   url: "{:url('Login/checkLogin')}",
+//                   url: "{:url('login/checkLogin')}",
+                   url: "{:url('login/checkLogin')}",
                    data: $("#login-form").serialize(),
                    success: function (res) {
                         res = JSON.parse(res);
                         if(res.state) {
+                            layer.msg(res.message, {time: 2000});
                             window.location = "{:url('Index/index')}";
                         } else {
                             layer.closeAll('loading');

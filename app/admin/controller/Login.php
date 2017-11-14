@@ -64,8 +64,8 @@ class Login extends Controller
         return $this->fetch("login");
     }
 
-    public function test() {
-        dump();
+    public function test($id = 2) {
+        echo "hello111".$id;
     }
 }
 

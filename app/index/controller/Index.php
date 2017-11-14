@@ -15,15 +15,12 @@ class Index extends Controller
         $date = date('Y-m-d');
         $this->assign('date', $date);
 //        return $this->fetch('user');
-        echo 'helllll';
 
         $verify = new Captcha();
 
         return $this->fetch();
     }
 
-    public function hello() {
-        return "hello world";
-    }
+
 
 }

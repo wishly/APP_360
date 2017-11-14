@@ -17,14 +17,16 @@ class Index extends BaseController {
     public function index() {
 //        Db::connect([]);
 //        dump(Admin::get(1));
-        $res = Admin::get(1);
-        $res = $res->toArray();
-        dump($res);
-        var_dump($_SESSION);
+//        $res = Admin::get(1);
+//        $res = $res->toArray();
+//        dump($res);
+//        var_dump($_SESSION);
+//        dump(session('session_start_time'));
+//        dump(time());
+        return $this->fetch();
     }
 
-    public function hello($id = "2") {
-        dump(config());
-        return "hello world".$id;
+    public function hello($id = 2) {
+        return 'hello11111111'.$id;
     }
 }

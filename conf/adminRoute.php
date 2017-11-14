@@ -15,5 +15,7 @@ return [
         ':id'   => ['index/hello', ['method' => 'get'], ['id' => '\d+']],
         ':name' => ['index/hello', ['method' => 'post']],
     ],
-    'admin/captcha/[:id]' => ['\think\captcha\CaptchaController@index',['method'=>'get'], ['id' => '\d+']],
+    'captcha/[:id]' => ['\think\captcha\CaptchaController@index',['method'=>'get'], ['id' => '\d+']],
+    'test/[:id]'    => 'admin/Login/test',
+    'hello/[:id]'   => 'Index/hello',
 ];
