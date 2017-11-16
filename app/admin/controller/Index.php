@@ -11,6 +11,8 @@ namespace app\admin\controller;
 //use think\Db;
 use app\admin\model\Admin;
 use app\admin\common\Base as BaseController;
+use think\console\command\make\Model;
+use think\Session;
 
 
 class Index extends BaseController {
@@ -23,10 +25,12 @@ class Index extends BaseController {
 //        var_dump($_SESSION);
 //        dump(session('session_start_time'));
 //        dump(time());
+        $this->assign('username', Session::get('user_name')); //显示登录用户名
         return $this->fetch();
     }
 
     public function hello($id = 2) {
         return 'hello11111111'.$id;
     }
+
 }
