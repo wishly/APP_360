@@ -47,7 +47,7 @@ class Login extends Controller
                     "logintime" => date("Y-m-d H:i:s")
                 ];
                 $userData->save($data); //存储登录IP和登录
-                session('session_start_time', time());
+                session::set('session_start_time', time());
                 Session::set("user_id", $userData["id"]);
                 Session::set("user_name", $userData["username"]);
                 $res["state"] = true;

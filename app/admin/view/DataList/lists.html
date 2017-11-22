@@ -1,0 +1,35 @@
+{extend name='common/common' /}
+{block name='data-title'}
+<div class="row">
+    <div class="col-xs-12">
+        <p>数据管理</p>
+    </div>
+</div>
+{/block}
+{block name='data-title'}
+    数据管理
+{/block}
+{block name='main'}
+<div class="row">
+    <div class="col-xs-4">
+        <div class="input-button" id="button-control">
+            <a href="{:url('add')}">
+                <button class="btn btn-primary" type="button" ><span class="glyphicon glyphicon-plus"></span> 新增</button>
+            </a>
+            <a href="{:url('delete')}">
+                <button class="btn btn-warning" type="button"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+            </a>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        <form action="{:url('DataList/search')}" method="post">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="请输入分类名称">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">搜索</button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
