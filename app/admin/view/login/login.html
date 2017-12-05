@@ -18,7 +18,7 @@
     <div class="row row-centered">
         <div class="well col-md-4 col-xs-8 col-centered" id="login-content">
             <h2>360后台登录</h2>
-            <form action="{:url('login/checkLogin')}" method="post" role="form" id="login-form">
+            <form action="{:url('login')}" method="post" role="form" id="login-form">
                 <div class="input-group input-group-md">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-user" aria-hidden="true"></i></span>
                     <input type="text" class="form-control" id="userid" name="userid" placeholder="请输入用户ID" />
@@ -71,7 +71,7 @@
                         res = JSON.parse(res);
                         if(res.state) {
                             layer.msg(res.message, {time: 2000});
-                            window.location = "{:url('Index/index')}";
+                            window.location = "{:url('DataList/lists')}";
                         } else {
                             layer.closeAll('loading');
                             refreshVerify();

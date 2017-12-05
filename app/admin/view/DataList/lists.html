@@ -2,12 +2,9 @@
 {block name='data-title'}
 <div class="row">
     <div class="col-xs-12">
-        <p>数据管理</p>
+        {$title}
     </div>
 </div>
-{/block}
-{block name='data-title'}
-    数据管理
 {/block}
 {block name='main'}
 <div class="row">
@@ -22,14 +19,63 @@
         </div>
     </div>
     <div class="col-xs-4">
-        <form action="{:url('DataList/search')}" method="post">
+        <form action="{:url('DataList/lists')}" method="post">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="请输入分类名称">
+                <input type="text" class="form-control" placeholder="请输入分类名称" name="keyword" value={$keyword}>
                 <span class="input-group-btn">
                     <button class="btn btn-primary" type="submit">搜索</button>
                 </span>
             </div>
         </form>
     </div>
+    <div class="col-xs-4"></div>
+</div>
+<div class="clearfix" style="margin-bottom: 15px;"></div> <!--清除浮动-->
+<div class="row">
+    <form action="{:url('DataList/lists')}" method="post" name="updateSort" id="updateSort">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th style="width: 35px; text-align: center;">
+                        <input type="checkbox" id="checkAll" class="check-all"/>
+                        <label for="checkAll"></label>
+                    </th>
+                    <th style="text-align: center;">ID</th>
+                    <th style="text-align: center;">名称</th>
+                    <th style="text-align: center;">所属分类</th>
+                    <th style="text-align: center;">是否推荐</th>
+                    <th style="text-align: center;">是否热门</th>
+                    <th style="text-align: center;">排序</th>
+                    <th style="width: 100px;text-align: center;">
+                        操作
+                    </th>
+                </tr>
+                </thead>
+                <tboody>
+                    {foreach name='datalist' item='vo'}
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="ids[]" class="ids" value={$vo.id} />
+                            </td>
+                            <td>{$vo.id}</td>
+                            <td>{$vo.title}</td>
+                            <td>{:action('BaseFunction/getParentsNames', ['id' => $vo['id']])}</td>
+                            <td>{eq name='vo.is_recommend' value='1'}
+                                是{else/}否
+                                {/eq}
+                            </td>
+                            <td>{eq name='vo.is_hot' value='1'}
+                                是{else/}否
+                                {/eq}
+                            </td>
+                            <td>{$vo.sort}</td>
+                        </tr>
+                    {/foreach}
+                </tboody>
+            </table>
+            <div class="page" style="text-align: center;">{$page}</div>
+        </div>
+    </form>
 </div>
 {/block}

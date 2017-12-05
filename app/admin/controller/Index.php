@@ -25,8 +25,7 @@ class Index extends BaseController {
 //        var_dump($_SESSION);
 //        dump(session('session_start_time'));
 //        dump(time());
-        $this->assign('username', Session::get('user_name')); //显示登录用户名
-        return $this->fetch();
+//        return $this->redirect('DataList/lists');
     }
 
     public function hello($id = 2) {

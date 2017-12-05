@@ -15,8 +15,9 @@ return [
 //        'id'             => '',
 //        // SESSION_ID的提交变量,解决flash上传跨域
 //        'var_session_id' => '',
-        // SESSION 前缀
+        //session过期时间
         'expire'         => 1800,
+        // SESSION 前缀
         'prefix'         => 'admin360',
         // 驱动方式 支持redis memcache memcached
         'type'           => '',
@@ -86,5 +87,18 @@ return [
     'show_error_msg'         => false,
     // 异常处理handle类 留空使用 \think\exception\Handle
     'exception_handle'       => '',
+
+    // +----------------------------------------------------------------------
+    // | 分页配置
+    // +----------------------------------------------------------------------
+    'paginate'               => [
+        'type'      => 'bootstrap',
+        'var_page'  => 'page',
+        'list_rows' => 15,
+    ],
+    // +----------------------------------------------------------------------
+    // | 防止变量未赋值报错
+    // +----------------------------------------------------------------------
+    error_reporting(E_ERROR | E_PARSE),
 
 ];
