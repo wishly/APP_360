@@ -70,6 +70,10 @@
                                 {/eq}
                             </td>
                             <td>{$vo.sort}</td>
+                            <td>
+                                <a href="{:url('DataList/edit', array('id'=>$vo['id']))}">编辑</a>
+                                <a class="confirm" href="{:url('DataList/delete', array('id'=>$vo['id']))}">删除</a>
+                            </td>
                         </tr>
                     {/foreach}
                 </tboody>

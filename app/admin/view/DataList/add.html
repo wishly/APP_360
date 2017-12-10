@@ -1,0 +1,85 @@
+{extend name='common/common' /}
+{block name='data-title'}
+<div class="row">
+    <div class="col-xs-12">
+        {$title}
+    </div>
+</div>
+{/block}
+{block name='main'}
+<div class="row">
+    <form action="{:url('DataList/add')}" class="form-horizontal" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label class="col-xs-3 control-label">所属高级类别：</label>
+            <div class="col-xs-9">
+                <div class="row select-add">
+                    <div class="col-xs-3">
+                        <select name="high_id" id="high_id" class="form-control">
+                            <option value="0">请选择高级类别</option>
+                            {foreach name="high_level" item="vo"}
+                                <option value="{$vo.id}" {if condition="($vo.id eq $data['high_id'])"} selected {/if}>{$vo.high_name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="col-xs-3">
+                        <select name="middle_id" id="middle_id" class="form-control">
+                            <option value="0">请选择中级类别</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-3">
+                        <select name="element_id" id="element_id" class="form-control">
+                            <option value="0">请选择初级类别</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
+{block name="javaScript"}
+<script>
+    $(document).ready(function(){
+        $("#high_id").change(function(){
+            var high_id = $("#high_id").val();
+            $.ajax({
+                type: "POST",
+                url: "{:url('DataList/getMiddleInfo')}",
+                data: {"high_id" : high_id},
+                // dataType: "text",
+                success: function(data) {
+                    // data = JSON.parse(data);
+                    if(data != ''){
+                        $("#middle_id").show();
+                        $("#middle_id").empty();
+                        $("#middle_id").append(data);
+                    } else {
+                        $("#middle_id").hide();
+                        $("#middle_id").empty();
+                        $("#element_id").hide();
+                        $("#element_id").empty();
+                    }
+                }
+            });
+        });
+        $("#middle_id").change(function () {
+           var middle_id = $("#middle_id").val();
+           $.ajax({
+               type: "POST",
+               url: "{:url('DataList/getElementaryInfo')}",
+               data: {"middle_id": middle_id},
+               success: function (data) {
+                   if(data != '') {
+                       $("#element_id").show();
+                       $("#element_id").empty();
+                       $("#element_id").append(data);
+                   } else {
+                       $("#element_id").hide();
+                       $("#element_id").empty();
+                   }
+               }
+           });
+        });
+    });
+</script>
+{/block}
