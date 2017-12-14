@@ -47,6 +47,7 @@ class DataList extends BaseController {
             $map["id"] = input("id", '', "int");
             $datalist = $datalist->where($map)->find();
             $high_level = model("high_level")->select();
+            var_dump($datalist);
             $this->assign("high_level", $high_level);  //高级分类数据
             $this->assign("data", $datalist);          //分类数据
             return $this->fetch('DataList/add');
