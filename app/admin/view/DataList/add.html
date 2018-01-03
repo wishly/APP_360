@@ -34,6 +34,46 @@
                 </div>
             </div>
         </div>
+        <div class="form-group">
+            <label class="col-xs-3 control-label">名称：</label>
+            <div class="col-xs-3 title-add">
+                <input type="text" id="title" name="title" class="form-control" value="{$data.title}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 control-label">链接地址：</label>
+            <div class="col-xs-3 href-add">
+                <input type="text" id="href" name="href" class="form-control" value="{$data.href}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 control-label">是否推荐：</label>
+            <div class="col-xs-4 recommend-add">
+                <input type="radio" name="is_recommend" value="0" {if condition="($data.is_recommend neq 1)"} checked {/if} /> 否
+                <input type="radio" name="is_recommend" value="1" {if condition="($data.is_recommend eq 1)"} checked {/if}> 是
+                <span style="color: indianred;">（推荐后，会在首页显示）</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 control-label">是否热门：</label>
+            <div class="col-xs-5 hot-add">
+                <input type="radio" name="is_hot" value="0" {if condition="($data.is_hot neq 1)"} checked {/if} /> 否
+                <input type="radio" name="is_hot" value="1" {if condition="($data.is_hot eq 1)"} checked {/if} /> 是
+                <span style="color: indianred;">（热门的数据，首页颜色不同）</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 control-label">排序：</label>
+            <div class="col-xs-3 sort-add">
+                <input type="text" id="sort" name="sort" class="form-control" value="{$data.sort}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-3 col-xs-offset-3 submit-add">
+                <input type="hidden" name="id" value="{$_GET['id']}" />
+                <button type="submit" class="btn btn-primary">提交</button>
+            </div>
+        </div>
     </form>
 </div>
 {/block}

@@ -42,7 +42,7 @@ class DataList extends BaseController {
         $this->assign('title', $title);
         $datalist = model("Datalist");
         if(Request::instance()->isPost()){
-
+            echo 1;
         } else {
             $map["id"] = input("id", '', "int");
             $datalist = $datalist->where($map)->find();
@@ -53,6 +53,7 @@ class DataList extends BaseController {
             return $this->fetch('DataList/add');
         }
     }
+
     public function getMiddleInfo(){
         $map["high_id"] = input('high_id',"", "int");
         $middle = model("MiddleLevel")->where($map)->field("id,middle_name")->select();
@@ -62,6 +63,7 @@ class DataList extends BaseController {
         }
         return $option;
     }
+
     public function getElementaryInfo(){
         $map["middle_id"] = input("middle_id", "", "int");
         $element = model("ElementaryLevel")->where($map)->field("id,elementary_name")->select();
