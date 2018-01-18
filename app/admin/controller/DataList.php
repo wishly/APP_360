@@ -41,15 +41,32 @@ class DataList extends BaseController {
         $title = '添加数据';    //添加数据
         $this->assign('title', $title);
         $datalist = model("Datalist");
-        if(Request::instance()->isPost()){
-            echo 1;
+
+        if(Request::instance()->isPost()){      //如果是表格提交
+            $add['high_id'] = input('high_id','0');
+            $add['middle_id'] = input('middle_id','0');
+            $add['elementary_id'] = input('elementary_id','0');
+            $add['href'] = input('href');
+            $add['title'] = input('title');
+            $add['is_recommend'] = input('is_recommend');
+            $add['is_hot'] = input('is_hot', '0', 'int');
+            $add['sort'] = input('sort', '1', 'int');
+
+            if($datalist->create($add)){
+                $res['state'] = 1;
+                return json_encode($res);
+            } else {
+                $res['state'] = 0;
+                return json_encode($res);
+            }
         } else {
-            $map["id"] = input("id", '', "int");
-            $datalist = $datalist->where($map)->find();
-            $high_level = model("high_level")->select();
-            var_dump($datalist);
+            //$map["id"] = input("id", '', "int");
+            //var_dump($map["id"]);
+            //$datalist = $datalist->where($map)->find();
+            $high_level = model("high_level")->where('')->select();
+            //var_dump($datalist);
             $this->assign("high_level", $high_level);  //高级分类数据
-            $this->assign("data", $datalist);          //分类数据
+            //$this->assign("data", $datalist);          //分类数据
             return $this->fetch('DataList/add');
         }
     }

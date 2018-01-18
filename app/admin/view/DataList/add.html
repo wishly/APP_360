@@ -8,7 +8,7 @@
 {/block}
 {block name='main'}
 <div class="row">
-    <form action="{:url('DataList/add')}" class="form-horizontal" method="post" enctype="multipart/form-data">
+    <form action="{:url('DataList/add')}" class="form-horizontal" method="post" enctype="multipart/form-data" id="add-form">
         <div class="form-group">
             <label class="col-xs-3 control-label">所属高级类别：</label>
             <div class="col-xs-9">
@@ -120,6 +120,44 @@
                }
            });
         });
+
+        $("#add-form").submit(function(){
+            var titleVal = $("#title").val();
+            var sortVal  = $("#sort").val();
+            if(!titleVal){
+                layer.msg('请输入标题名字', {time: 2000});
+                return false;
+            }
+            if(!sortVal || isNaN(sortVal)){
+                layer.msg('请输入排序，并且为数字', {time: 2000});
+                return false;
+            }
+            $.ajax({
+               type: "POST",
+               url: "{:url('DataList/add')}",
+               data: $("#add-form").serialize(),
+               success: function($res) {
+                    $res = JSON.parse($res);
+                    if($res.state === 1){
+                        layer.msg("新增" + titleVal + "成功", {time: 2000});
+                        window.location = "{:url('DataList/add')}";
+                    } else {
+                        layer.msg("新增" + titleVal + "失败", {time: 2000});
+                    }
+               },
+               error: function(){
+
+               },
+               beforeSend: function(){
+                   layer.load();
+               },
+                complete: function(){
+                   layer.closeAll("loading");
+               }
+            });
+            return false; //防止表单submit提交,只允许ajax提交
+        });
+
     });
 </script>
 {/block}
