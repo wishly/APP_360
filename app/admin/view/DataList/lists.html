@@ -13,9 +13,7 @@
             <a href="{:url('add')}">
                 <button class="btn btn-primary" type="button" ><span class="glyphicon glyphicon-plus"></span> 新增</button>
             </a>
-            <a href="{:url('delete')}">
-                <button class="btn btn-warning" type="button"><span class="glyphicon glyphicon-minus"></span> 删除</button>
-            </a>
+            <button class="btn btn-warning" type="button" id="delete-all"><span class="glyphicon glyphicon-minus"></span> 删除</button>
         </div>
     </div>
     <div class="col-xs-4">
@@ -61,18 +59,20 @@
                             <td>{$vo.id}</td>
                             <td>{$vo.title}</td>
                             <td>{:action('BaseFunction/getParentsNames', ['id' => $vo['id']])}</td>
-                            <td>{eq name='vo.is_recommend' value='1'}
+                            <td>
+                                {eq name='vo.is_recommend' value='1'}
                                 是{else/}否
                                 {/eq}
                             </td>
-                            <td>{eq name='vo.is_hot' value='1'}
+                            <td>
+                                {eq name='vo.is_hot' value='1'}
                                 是{else/}否
                                 {/eq}
                             </td>
                             <td>{$vo.sort}</td>
                             <td>
                                 <a href="{:url('DataList/edit', array('id'=>$vo['id']))}">编辑</a>
-                                <a class="confirm" href="{:url('DataList/delete', array('id'=>$vo['id']))}">删除</a>
+                                <a class="confirm" href="#" data-id={$vo.id}>删除</a>
                             </td>
                         </tr>
                     {/foreach}
@@ -82,4 +82,86 @@
         </div>
     </form>
 </div>
+{/block}
+{block name="javaScript"}
+<script>
+    $(document).ready(function(){
+        $("#checkAll").click(function(){
+            $(".ids").prop("checked", this.checked);
+            //var ids = document.getElementsByClassName("ids");
+            // var idsArr = [];
+            // for(var i = 0; i < ids.length; i++){
+            //     idsArr.push(ids[i]);
+            // }
+            // idsArr.forEach(function(val, index, elem){
+            //    val.setAttribute("checked", true);
+            // });
+        });
+
+        $("#delete-all").click(function(){
+            var ids = $(".ids:checked");
+            if(ids.length < 1){
+                layer.msg("请选择需要删除的选项", {time: 2000});
+                return false;
+            }
+            layer.confirm("确定要删除这些选项么", function(){
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('DataList/delete')}",
+                    data: ids.serialize(),
+                    success: function(res){
+                        res = JSON.parse(res);
+                        if(res.state){
+                            var msg = '';
+                            res.title.forEach(function($value, $index){
+                                msg += $value;
+                            });
+                            layer.msg("删除" + msg + "成功");
+                            // console.log(res.highId[1]);
+                            window.location.reload();
+                        } else {
+
+                        }
+                    },
+                    beforeSend: function () {
+                        layer.load();
+                    },
+                    complete: function(){
+                        layer.closeAll('loading');
+                    }
+                });
+            });
+        });
+        $(".confirm").click(function () {
+            var id = $(this).data('id');
+            layer.confirm('确定要删除此项么？', function(){
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('DataList/delete')}",
+                    data: {'id': id},
+                    success: function(res){
+                        res = JSON.parse(res);
+                        if(res.state){
+                            var msg = '';
+                            res.title.forEach(function($value, $index){
+                                msg += $value;
+                            });
+                            layer.msg("删除" + msg + "成功");
+                            // console.log(res.highId[1]);
+                            window.location.reload();
+                        } else {
+                            layer.msb('返回数据错误', {time: 2000});
+                        }
+                    },
+                    beforeSend: function () {
+                        layer.load();
+                    },
+                    complete: function(){
+                        layer.closeAll('loading');
+                    }
+                });
+            });
+        });
+    });
+</script>
 {/block}

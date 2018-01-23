@@ -8,11 +8,11 @@
 {/block}
 {block name='main'}
 <div class="row">
-    <form action="{:url('DataList/add')}" class="form-horizontal" method="post" enctype="multipart/form-data" id="add-form">
+    <form action="{:url('DataList/edit')}" class="form-horizontal" method="post" enctype="multipart/form-data" id="edit-form">
         <div class="form-group">
             <label class="col-xs-3 control-label">所属高级类别：</label>
             <div class="col-xs-9">
-                <div class="row select-add">
+                <div class="row select-edit">
                     <div class="col-xs-3">
                         <select name="high_id" id="high_id" class="form-control">
                             <option value="0">请选择高级类别</option>
@@ -24,11 +24,17 @@
                     <div class="col-xs-3">
                         <select name="middle_id" id="middle_id" class="form-control">
                             <option value="0">请选择中级类别</option>
+                            {foreach name="middle_level" item="vo"}
+                                <option value="{$vo.id}" {if condition="($vo.id eq $data['middle_id'])"} selected {/if}>{$vo.middle_name}</option>
+                            {/foreach}
                         </select>
                     </div>
                     <div class="col-xs-3">
                         <select name="element_id" id="element_id" class="form-control">
                             <option value="0">请选择初级类别</option>
+                            {foreach name="elementary_level" item="vo"}
+                                <option value="{$vo.id}" {if condition="($vo.id eq $data['elementary_id'])"} selected {/if}>{$vo.elementary_name}</option>
+                            {/foreach}
                         </select>
                     </div>
                 </div>
@@ -36,19 +42,19 @@
         </div>
         <div class="form-group">
             <label class="col-xs-3 control-label">名称：</label>
-            <div class="col-xs-3 title-add">
+            <div class="col-xs-3 title-edit">
                 <input type="text" id="title" name="title" class="form-control" value="{$data.title}"/>
             </div>
         </div>
         <div class="form-group">
             <label class="col-xs-3 control-label">链接地址：</label>
-            <div class="col-xs-3 href-add">
+            <div class="col-xs-3 href-edit">
                 <input type="text" id="href" name="href" class="form-control" value="{$data.href}" />
             </div>
         </div>
         <div class="form-group">
             <label class="col-xs-3 control-label">是否推荐：</label>
-            <div class="col-xs-4 recommend-add">
+            <div class="col-xs-4 recommend-edit">
                 <input type="radio" name="is_recommend" value="0" {if condition="($data.is_recommend neq 1)"} checked {/if} /> 否
                 <input type="radio" name="is_recommend" value="1" {if condition="($data.is_recommend eq 1)"} checked {/if}> 是
                 <span style="color: indianred;">（推荐后，会在首页显示）</span>
@@ -56,7 +62,7 @@
         </div>
         <div class="form-group">
             <label class="col-xs-3 control-label">是否热门：</label>
-            <div class="col-xs-5 hot-add">
+            <div class="col-xs-5 hot-edit">
                 <input type="radio" name="is_hot" value="0" {if condition="($data.is_hot neq 1)"} checked {/if} /> 否
                 <input type="radio" name="is_hot" value="1" {if condition="($data.is_hot eq 1)"} checked {/if} /> 是
                 <span style="color: indianred;">（热门的数据，首页颜色不同）</span>
@@ -64,13 +70,13 @@
         </div>
         <div class="form-group">
             <label class="col-xs-3 control-label">排序：</label>
-            <div class="col-xs-3 sort-add">
+            <div class="col-xs-3 sort-edit">
                 <input type="text" id="sort" name="sort" class="form-control" value="{$data.sort}"/>
             </div>
         </div>
         <div class="form-group">
-            <div class="col-xs-3 col-xs-offset-3 submit-add">
-                <input type="hidden" name="id" value="{$_GET['id']}" />
+            <div class="col-xs-3 col-xs-offset-3 submit-edit">
+                <input type="hidden" name="id" value="{$id}" />
                 <button type="submit" class="btn btn-primary">提交</button>
             </div>
         </div>
@@ -80,6 +86,10 @@
 {block name="javaScript"}
 <script>
     $(document).ready(function(){
+        if( $("#middle_id").val() == 0 )
+            $("#middle_id").hide();
+        if( $("#element_id").val() == 0)
+            $("#element_id").hide();
         $("#high_id").change(function(){
             var high_id = $("#high_id").val();
             $.ajax({
@@ -103,25 +113,25 @@
             });
         });
         $("#middle_id").change(function () {
-           var middle_id = $("#middle_id").val();
-           $.ajax({
-               type: "POST",
-               url: "{:url('DataList/getElementaryInfo')}",
-               data: {"middle_id": middle_id},
-               success: function (data) {
-                   if(data != '') {
-                       $("#element_id").show();
-                       $("#element_id").empty();
-                       $("#element_id").append(data);
-                   } else {
-                       $("#element_id").hide();
-                       $("#element_id").empty();
-                   }
-               }
-           });
+            var middle_id = $("#middle_id").val();
+            $.ajax({
+                type: "POST",
+                url: "{:url('DataList/getElementaryInfo')}",
+                data: {"middle_id": middle_id},
+                success: function (data) {
+                    if(data != '') {
+                        $("#element_id").show();
+                        $("#element_id").empty();
+                        $("#element_id").append(data);
+                    } else {
+                        $("#element_id").hide();
+                        $("#element_id").empty();
+                    }
+                }
+            });
         });
 
-        $("#add-form").submit(function(){
+        $("#edit-form").submit(function(){
             var titleVal = $("#title").val();
             var sortVal  = $("#sort").val();
             if(!titleVal){
@@ -133,28 +143,27 @@
                 return false;
             }
             $.ajax({
-               type: "POST",
-               url: "{:url('DataList/add')}",
-               data: $("#add-form").serialize(),
-               success: function($res) {
-                    $res = JSON.parse($res);
-                    if($res.state === 1){
-                        layer.msg("新增" + titleVal + "成功", {time: 2000});
-                        // window.location = "{:url('DataList/add')}";
-                        window.location.reload();
-                    } else {
-                        layer.msg("新增" + titleVal + "失败", {time: 2000});
-                    }
-               },
-               error: function(){
+                type: "POST",
+                url: "{:url('DataList/edit')}",
+                data: $("#edit-form").serialize(),
+                success: function($res) {
+                     $res = JSON.parse($res);
+                     //console.log($res);
+                     if($res.state){
+                         layer.msg($res.message, {time: 2000});
+                     } else {
+                         layer.msg($res.message, {time: 2000});
+                     }
+                },
+                error: function(){
 
-               },
-               beforeSend: function(){
-                   layer.load();
-               },
+                },
+                beforeSend: function(){
+                    layer.load();
+                },
                 complete: function(){
-                   layer.closeAll("loading");
-               }
+                    layer.closeAll("loading");
+                }
             });
             return false; //防止表单submit提交,只允许ajax提交
         });
