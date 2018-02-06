@@ -1,0 +1,119 @@
+{extend name='common/common' /}
+{block name='data-title'}
+<div class="row">
+    <div class="col-xs-12">
+        {$title}
+    </div>
+</div>
+{/block}
+{block name='main'}
+<div class="row">
+    <form action="{:url('ElementaryLevel/add')}" class="form-horizontal" method="post" enctype="multipart/form-data" id="add-form">
+        <div class="form-group">
+            <label class="col-xs-3 control-label">所属高级类别：</label>
+            <div class="col-xs-9">
+                <div class="row select-add">
+                    <div class="col-xs-4">
+                        <select name="high_id" id="high_id" class="form-control">
+                            <option value="0" >请选择高级分类</option>
+                            {foreach name='highLevel' item='vo'}
+                                <option value="{$vo.id}">{$vo.high_name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="col-xs-4">
+                        <select name="middle_id" id="middle_id" class="form-control">
+                            <option value="0" >请选择中级分类</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 control-label">名称：</label>
+            <div class="col-xs-3 title-add">
+                <input type="text" id="elementary_name" name="elementary_name" class="form-control" value="{$data.elementary_name}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 control-label">排序：</label>
+            <div class="col-xs-3 sort-add">
+                <input type="text" id="sort" name="sort" class="form-control" value="{$data.sort}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-3 col-xs-offset-3 submit-add">
+                <input type="hidden" name="id" value="{$_POST['id']}" />
+                <button type="submit" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
+{block name="javaScript"}
+<script>
+    $(document).ready(function(){
+        $("#high_id").change(function(){
+            var high_id = $("#high_id").val();
+            $.ajax({
+                type: "POST",
+                url: "{:url('ElementaryLevel/getMiddleInfo')}",
+                data: {"high_id" : high_id},
+                // dataType: "text",
+                success: function(data) {
+                    // data = JSON.parse(data);
+                    if(data != ''){
+                        $("#middle_id").show();
+                        $("#middle_id").empty();
+                        $("#middle_id").append(data);
+                    } else {
+                        $("#middle_id").hide();
+                        $("#middle_id").empty();
+                    }
+                    $("#element_id").hide();
+                    $("#element_id").empty();
+                }
+            });
+        });
+
+        $("#add-form").submit(function(){
+            var titleVal = $("#elementary_name").val();
+            var sortVal  = $("#sort").val();
+            if(!titleVal){
+                layer.msg('请输入名称', {time: 2000});
+                return false;
+            }
+            if(!sortVal || isNaN(sortVal)){
+                layer.msg('请输入排序，并且为数字', {time: 2000});
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                url: "{:url('ElementaryLevel/add')}",
+                data: $("#add-form").serialize(),
+                success: function($res) {
+                    $res = JSON.parse($res);
+                    if($res.state === 1){
+                        layer.msg("新增" + titleVal + "成功", {time: 2000});
+                        // window.location = "{:url('DataList/add')}";
+                        window.location.reload();
+                    } else {
+                        layer.msg("新增" + titleVal + "失败", {time: 2000});
+                    }
+                },
+                error: function(){
+
+                },
+                beforeSend: function(){
+                    layer.load();
+                },
+                complete: function(){
+                    layer.closeAll("loading");
+                }
+            });
+            return false; //防止表单submit提交,只允许ajax提交
+        });
+
+    });
+</script>
+{/block}

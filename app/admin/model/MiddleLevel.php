@@ -11,4 +11,9 @@ use think\Model;
 
 class MiddleLevel extends Model {
 
+    public function highLevel(){
+
+        return $this->belongsTo("HighLevel", "id");
+
+    }
 }

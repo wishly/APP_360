@@ -43,4 +43,13 @@ class BaseFunction extends BaseController {
         }
         return $string;
     }
+
+    public function getPicUrl($picture) {
+        if(!empty($picture)){
+            $url = '/Uploads/'.$picture;
+        } else {
+            $url = '/Uploads/photo.jpg';
+        }
+        return $url;
+    }
 }

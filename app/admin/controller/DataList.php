@@ -150,7 +150,6 @@ class DataList extends BaseController {
         $map['id'] = array('in', $id);
         $highLevel = model("Datalist")->where($map)->field('title, id')->select();
         $highTitle = array();
-        $res = array();
         $res['state'] = 0;
         if( $highLevel ){
             $highId = array();

@@ -1,0 +1,155 @@
+{extend name='common/common' /}
+{block name='data-title'}
+<div class="row">
+    <div class="col-xs-12">
+        {$title}
+    </div>
+</div>
+{/block}
+{block name='main'}
+<div class="row">
+    <div class="col-xs-4">
+        <div class="input-button" id="button-control">
+            <a href="{:url('add')}">
+                <button class="btn btn-primary" type="button" ><span class="glyphicon glyphicon-plus"></span> 新增</button>
+            </a>
+            <button class="btn btn-warning" type="button" id="delete-all"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        <form action="{:url('HighLevel/lists')}" method="post">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="请输入分类名称" name="keyword" value={$keyword}>
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">搜索</button>
+                </span>
+            </div>
+        </form>
+    </div>
+    <div class="col-xs-4"></div>
+</div>
+<div class="clearfix" style="margin-bottom: 15px;"></div> <!--清除浮动-->
+<div class="row">
+    <form action="{:url('DataList/lists')}" method="post" name="updateSort" id="updateSort">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th style="width: 35px; text-align: center;">
+                        <input type="checkbox" id="checkAll" class="check-all"/>
+                        <label for="checkAll"></label>
+                    </th>
+                    <th style="text-align: center;">ID</th>
+                    <th style="text-align: center;">名称</th>
+                    <th style="text-align: center;">首页是否显示</th>
+                    <th style="text-align: center;">首页显示位置</th>
+                    <th style="text-align: center;">排序</th>
+                    <th style="text-align: center;">操作</th>
+                </tr>
+                </thead>
+                <tboody>
+                    {foreach name='datalist' item='vo'}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="ids[]" class="ids" value={$vo.id} />
+                        </td>
+                        <td>{$vo.id}</td>
+                        <td>{$vo.high_name}</td>
+                        <td>
+                            {eq name='vo.is_display' value='1'}
+                                是{else/}否
+                            {/eq}
+                        </td>
+                        <td>
+                            {eq name='vo.layout' value='left'}
+                            左侧{else/}底部
+                            {/eq}
+                        </td>
+                        <td>{$vo.sort}</td>
+                        <td>
+                            <a href="{:url('HighLevel/edit', array('id'=>$vo.id))}">编辑</a>
+                            <a class="confirm" href="#" data-id={$vo.id}>删除</a>
+                        </td>
+                    </tr>
+                    {/foreach}
+                </tboody>
+            </table>
+            <div class="page" style="text-align: center;">{$page}</div>
+        </div>
+    </form>
+</div>
+{/block}
+{block name="javaScript"}
+<script>
+    $(document).ready(function(){
+        $("#checkAll").click(function(){
+            $(".ids").prop("checked", this.checked);
+        });
+
+        $("#delete-all").click(function(){
+            var ids = $(".ids:checked");
+            if(ids.length < 1){
+                layer.msg("请选择需要删除的选项", {time: 2000});
+                return false;
+            }
+            layer.confirm("确定要删除这些选项么", function(){
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('HighLevel/delete')}",
+                    data: ids.serialize(),
+                    success: function(res){
+                        res = JSON.parse(res);
+                        if(res.state){
+                            var msg = '';
+                            res.title.forEach(function($value, $index){
+                                msg += $value;
+                            });
+                            layer.msg("删除" + msg + "成功");
+                            // console.log(res.highId[1]);
+                            window.location.reload();
+                        } else {
+
+                        }
+                    },
+                    beforeSend: function () {
+                        layer.load();
+                    },
+                    complete: function(){
+                        layer.closeAll('loading');
+                    }
+                });
+            });
+        });
+        $(".confirm").click(function () {
+            var id = $(this).data('id');
+            layer.confirm('确定要删除此项么？', function(){
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('HighLevel/delete')}",
+                    data: {'id': id},
+                    success: function(res){
+                        res = JSON.parse(res);
+                        if(res.state){
+                            var msg = '';
+                            res.title.forEach(function($value, $index){
+                                msg += $value;
+                            });
+                            layer.msg("删除" + msg + "成功");
+                            // console.log(res.highId[1]);
+                            window.location.reload();
+                        } else {
+                            layer.msb('返回数据错误', {time: 2000});
+                        }
+                    },
+                    beforeSend: function () {
+                        layer.load();
+                    },
+                    complete: function(){
+                        layer.closeAll('loading');
+                    }
+                });
+            });
+        });
+    });
+</script>
+{/block}
