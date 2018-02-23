@@ -1,0 +1,81 @@
+{extend name='common/common' /}
+{block name='data-title'}
+<div class="row">
+    <div class="col-xs-12">
+        {$title}
+    </div>
+</div>
+{/block}
+{block name='main'}
+<div class="row">
+    <form action="{:url('changePwd')}" class="form-horizontal" method="post" enctype="multipart/form-data" id="changePwd-form">
+        <div class="form-group">
+            <label class="col-xs-4 control-label" for="old_password">原始密码：</label>
+            <div class="col-xs-4">
+                <input type="password" id="old_password" name="old_password" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-4 control-label" for="new_password">新密码：</label>
+            <div class="col-xs-4">
+                <input type="password" id="new_password" name="new_password" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-4 control-label" for="new_password2">确认密码：</label>
+            <div class="col-xs-4">
+                <input type="password" id="new_password2" name="new_password2" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-4 col-xs-offset-4 submit-changePwd">
+                <button type="submit" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
+{block name="javaScript"}
+<script>
+$(document).ready(function(){
+    $("#changePwd-form").submit(function(){
+        var oldPwd = $("#old_password").val();
+        var newPwd = $("#new_password").val();
+        var newPwd2 = $("#new_password2").val();
+        // if(oldPwd == '' || newPwd == ''){
+        //     layer.msg('密码输入不能为空', {time: 2000});
+        //     return false;
+        // }
+        if(oldPwd.length < 6 || newPwd.length < 6) {
+            layer.msg('密码长度至少为6位以上', {time: 2000});
+            return false;
+        }
+        if(newPwd != newPwd2){
+            layer.msg('两次输入密码不一致，请重新输入。', {time: 2000});
+            return false;
+        }
+        $.ajax({
+            type: 'POST',
+            url: "{:url('changePwd')}",
+            data: $("#changePwd-form").serialize(),
+            success: function(res){
+                $res = JSON.parse(res);
+                if($res.state){
+                    layer.msg($res.message, {time: 2000});
+                    window.location.href = "{:url('DataList/lists')}";
+                } else {
+                    layer.msg($res.message, {time: 2000});
+                }
+            },
+            beforeSend: function(){
+                layer.load();
+            },
+            complete: function(){
+                layer.closeAll("loading");
+            }
+        });
+       return false;
+    });
+});
+</script>
+{/block}

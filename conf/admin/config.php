@@ -16,7 +16,7 @@ return [
 //        // SESSION_ID的提交变量,解决flash上传跨域
 //        'var_session_id' => '',
         //session过期时间
-        'expire'         => 1800,
+        'expire'         => 3600,
         // SESSION 前缀
         'prefix'         => 'admin360',
         // 驱动方式 支持redis memcache memcached

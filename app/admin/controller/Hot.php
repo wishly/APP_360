@@ -114,14 +114,14 @@ class Hot extends BaseController {
             $id = input('id',0,'int');
         }
         $map['id'] = array('in', $id);
-        $hot = model("Hot")->where($map)->field('high_name, id')->select();
+        $hot = model("Hot")->where($map)->field('title, id')->select();
         $hotTitle = array();
         $res['state'] = 0;
         if( $hot ){
             $hotId = array();
             $highLevel = $hot->toArray();
             foreach($hot as $key => $value) {
-                array_push($hotTitle, $value['high_name']);
+                array_push($hotTitle, $value['title']);
                 array_push($hotId, $value['id']);
             }
             $res['state']  = 1;
@@ -138,15 +138,39 @@ class Hot extends BaseController {
         $this->assign('title', $title);
 
         if(Request::instance()->isPost()) {
-
             $id = input('id', '', 'int');
-            $inputData['high_name']  = input('high_name', '');
-            $inputData['is_display'] = input('is_display', '', 'int');
-            $inputData['layout']     = input('layout', '', 'string');
-            $inputData['sort']       = input('sort', '', 'int');
 
-            $data = model("HighLevel")->save($inputData, array('id' => $id));
-            //$res['id'] = $id;
+            $inputData['title']        = input('title', '');
+            $inputData['href']         = input('href', '');
+            $inputData['type']         = input('type', '', 'int');
+            $inputData['sort']         = input('sort', '', 'int');
+            $inputData['is_recommend'] = input('is_recommend', '', 'int');
+
+            if($inputData['type'] == 2){
+                if($_FILES['picture']['tmp_name']){//是否有上传文件，如果有才更新picture，否则会无法加载图片
+                    $date = date('Y-m-d');
+                    $path = ROOT_PATH . 'public' . DS . 'Uploads' . DS . $date;
+                    $dir = iconv('UTF-8', 'GBK', $path);
+                    $file = $_FILES['picture'];
+                    if($file && $file['size'] < 5242880){ //上传小于5M 5M = 5120K = 5242880b
+                        if(move_uploaded_file($file['tmp_name'], $dir . DS . $file['name'])){
+                            $res['state']   = 1;
+                            $res['message'] = $file['name'].'上传成功';
+                        } else {
+                            $res['state']   = 0;
+                            $res['message'] = $file['name'].'文件上传失败';
+                        }
+                    } else {
+                        $res['state']   = 0;
+                        $res['message'] = '文件上传大小超过最大限制';
+                    }
+                    $inputData['picture']  = $date . DS . $file['name'];
+                }
+            } else {
+                $inputData['picture']  = '';
+            }
+
+            $data = model("Hot")->save($inputData, array('id' => $id));
             if($data !== false){
                 $res['state']   = 1;
                 $res['message'] = '编辑成功';
@@ -156,13 +180,12 @@ class Hot extends BaseController {
             }
             return json_encode($res);
         } else {
-            $id               = input('id', '', 'int');
-
-            $data             = model("HighLevel")->where(['id' => $id])->find();
+            $id   = input('id', '', 'int');
+            $data = model("Hot")->where(['id' => $id])->find();
             $this->assign('id', $id);
             $this->assign("data", $data);
 
-            return $this->fetch("highLevel/edit");
+            return $this->fetch("hot/edit");
         }
     }
 }

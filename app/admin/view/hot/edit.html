@@ -8,99 +8,103 @@
 {/block}
 {block name='main'}
 <div class="row">
-    <form action="{:url('add')}" class="form-horizontal" method="post" enctype="multipart/form-data" id="add-form">
+    <form action="{:url('edit')}" class="form-horizontal" method="post" enctype="multipart/form-data" id="edit-form">
         <div class="form-group">
-            <label class="col-xs-3 control-label">名称：</label>
-            <div class="col-xs-3 title-add">
-                <input type="text" id="title" name="title" class="form-control" value="{$data.title}"/>
+            <label class="col-xs-3 control-label" for="title">名称：</label>
+            <div class="col-xs-3 title-edit">
+                <input type="text" id="title" name="title" class="form-control" value={$data.title} />
             </div>
         </div>
         <div class="form-group">
-            <label class="col-xs-3 control-label">链接地址：</label>
-            <div class="col-xs-3 href-add">
-                <input type="text" id="href" name="sort" class="form-control" value="{$data.href}" />
+            <label class="col-xs-3 control-label" for="href">链接地址：</label>
+            <div class="col-xs-3 href-edit">
+                <input type="text" id="href" name="href" class="form-control" value={$data.href} />
             </div>
         </div>
         <div class="form-group">
             <label class="col-xs-3 control-label">类型：</label>
             <div class="col-xs-4 type-type">
-                <input type="radio" name="type" value="0"> 热门区
-                <input type="radio" name="type" value="1"> 广告区
-                <input type="radio" name="type" value="2"> 图片区
+                <input type="radio" name="type" value="0" {if condition="($data.type eq 0)" } checked {/if} /> 热门区
+                <input type="radio" name="type" value="1" {if condition="($data.type eq 1)" } checked {/if} /> 广告区
+                <input type="radio" name="type" value="2" {if condition="($data.type eq 2)" } checked {/if} /> 图片区
                 <span style="color:indianred">（不同类型，首页显示在不同的位置）</span>
+            </div>
+        </div>
+        <div class="form-group" id="picture" {if condition="($data.picture eq null)"} style="display: none" {/else} style="display: block;" {/if} >
+            <label class="col-sm-3 control-label">图片：</label>
+            <div class="col-sm-9">
+                <input type="file" name="picture" id="file" value={$data.picture} />
+                <img id="preview" {if condition="($data.picture neq null)"} src={:action('BaseFunction/getPicUrl', ['picture' => $data.picture])} style="width: 100px; height: 100px; padding-top: 10px;" {else/} style="display: none;" {/if} />
             </div>
         </div>
         <div class="form-group">
             <label class="col-xs-3 control-label">是否推荐：</label>
-            <div class="col-xs-4 recommend-add">
-                <input type="radio" name="is_display" value="0" {if condition="($data.is_display neq 1)"} checked {/if} /> 否
-                <input type="radio" name="is_display" value="1" {if condition="($data.is_display eq 1)"} checked {/if}> 是
+            <div class="col-xs-4 recommend-edit">
+                <input type="radio" name="is_recommend" value="0" {if condition="($data.is_recommend eq 0)"} checked {/if} /> 否
+                <input type="radio" name="is_recommend" value="1" {if condition="($data.is_recommend eq 1)"} checked {/if} /> 是
             </div>
         </div>
         <div class="form-group">
-            <label class="col-xs-3 control-label">排序：</label>
-            <div class="col-xs-3 sort-add">
-                <input type="text" id="sort" name="sort" class="form-control" value="{$data.sort}" />
+            <label class="col-xs-3 control-label" for="sort">排序：</label>
+            <div class="col-xs-3 sort-edit">
+                <input type="text" id="sort" name="sort" class="form-control" value={$data.sort} />
             </div>
         </div>
         <div class="form-group">
-            <div class="col-xs-3 col-xs-offset-3 submit-add">
-                <input type="hidden" name="id" value="{$_POST['id']}" />
+            <div class="col-xs-3 col-xs-offset-3 submit-edit">
+                <input type="hidden" name="id" value={$data.id} />
                 <button type="submit" class="btn btn-primary">提交</button>
             </div>
         </div>
+        <!--<div class="col-sm-9">-->
+        <!--<input type="file" name="picture"/>-->
+        <!--</div>-->
+        <!--<button type="submit" class="btn btn-primary">提交</button>-->
     </form>
 </div>
 {/block}
 {block name="javaScript"}
 <script>
     $(document).ready(function(){
-        $("#high_id").change(function(){
-            var high_id = $("#high_id").val();
-            $.ajax({
-                type: "POST",
-                url: "{:url('DataList/getMiddleInfo')}",
-                data: {"high_id" : high_id},
-                // dataType: "text",
-                success: function(data) {
-                    // data = JSON.parse(data);
-                    if(data != ''){
-                        $("#middle_id").show();
-                        $("#middle_id").empty();
-                        $("#middle_id").append(data);
-                    } else {
-                        $("#middle_id").hide();
-                        $("#middle_id").empty();
-                    }
-                    $("#element_id").hide();
-                    $("#element_id").empty();
-                }
-            });
+        $("#file").change(function(){
+            if( this.value.length > 0 ) {   //判断file是否为空
+                var src = getObjectURL( $("#file").get(0).files[0] );
+                $("#preview").attr('src', src);
+                $("#preview").show();
+            } else {
+                $("#preview").hide();
+            }
         });
-        $("#middle_id").change(function () {
-            var middle_id = $("#middle_id").val();
-            $.ajax({
-                type: "POST",
-                url: "{:url('DataList/getElementaryInfo')}",
-                data: {"middle_id": middle_id},
-                success: function (data) {
-                    if(data != '') {
-                        $("#element_id").show();
-                        $("#element_id").empty();
-                        $("#element_id").append(data);
-                    } else {
-                        $("#element_id").hide();
-                        $("#element_id").empty();
-                    }
+
+        //建立一個可存取到該file的url
+        function getObjectURL(file) {
+            var url = null ;
+            // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
+            if (window.createObjectURL != undefined) { // basic
+                url = window.createObjectURL(file) ;
+            } else if (window.URL != undefined) { // mozilla(firefox)
+                url = window.URL.createObjectURL(file) ;
+            } else if (window.webkitURL != undefined) { // webkit or chrome
+                url = window.webkitURL.createObjectURL(file) ;
+            }
+            return url ;
+        }
+
+        $("input[name=type]").each(function(index, elem, arr){
+            $(this).click(function(){
+                if($(this).val() == 2){
+                    $("#picture").show();
+                } else {
+                    $("#picture").hide();
                 }
             });
         });
 
-        $("#add-form").submit(function(){
-            var titleVal = $("#high_name").val();
+        $("#edit-form").submit(function(){
+            var titleVal = $("#title").val();
             var sortVal  = $("#sort").val();
             if(!titleVal){
-                layer.msg('请输入标题名字', {time: 2000});
+                layer.msg('请输入标题名称', {time: 2000});
                 return false;
             }
             if(!sortVal || isNaN(sortVal)){
@@ -109,17 +113,19 @@
             }
             $.ajax({
                 type: "POST",
-                url: "{:url('HighLevel/add')}",
-                data: $("#add-form").serialize(),
+                url: "{:url('edit')}",
+                data: new FormData($('#edit-form')[0]),
+                processData: false,         //不需要对数据做处理
+                contentType: false,
                 success: function($res) {
                     $res = JSON.parse($res);
-                    if($res.state === 1){
-                        layer.msg("新增" + titleVal + "成功", {time: 2000});
-                        // window.location = "{:url('DataList/add')}";
+                    if($res.state){
+                        layer.msg($res.message, {time: 2000});
                         window.location.reload();
                     } else {
-                        layer.msg("新增" + titleVal + "失败", {time: 2000});
+                        layer.msg($res.message, {time: 2000});
                     }
+
                 },
                 error: function(){
 
@@ -133,7 +139,6 @@
             });
             return false; //防止表单submit提交,只允许ajax提交
         });
-
     });
 </script>
 {/block}
