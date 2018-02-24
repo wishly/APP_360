@@ -46,7 +46,7 @@ class Index extends BaseController {
                 $res['message'] = '密码修改成功';
             } else {
                 $res['state'] = 0;
-                $res['message'] = '新密码存储失败';
+                $res['message'] = '密码修改失败';
             }
         } else {
             $res['state'] = 0;

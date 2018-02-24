@@ -60,8 +60,19 @@
            var $username = $("#userid"),
                $userPwd  = $("#password"),
                $verify   = $("#verify");
-
            $("#login-form").submit(function(){
+               if(!$username.val()){
+                   layer.msg('用户名不能为空', {time: 2000});
+                   return false;
+               }
+               if(!$userPwd.val()){
+                   layer.msg('密码不能为空', {time: 2000});
+                   return false;
+               }
+               if(!$verify.val()){
+                   layer.msg('请输入验证码', {time: 2000});
+                   return false;
+               }
                $.ajax({
                    type: "POST",
 //                   url: "{:url('login/checkLogin')}",

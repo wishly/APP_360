@@ -68,9 +68,9 @@
     $(document).ready(function(){
         $("#file").change(function(){
             if( this.value.length > 0 ) {   //判断file是否为空
-                 var src = getObjectURL( $("#file").get(0).files[0] );
-                 $("#preview").attr('src', src);
-                 $("#preview").show();
+                var src = getObjectURL( $("#file").get(0).files[0] );
+                $("#preview").attr('src', src);
+                $("#preview").show();
             } else {
                 $("#preview").hide();
             }
